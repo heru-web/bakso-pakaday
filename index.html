@@ -337,6 +337,36 @@
         font-weight: 600;
         color: #7c3aed;
       }
+
+      /* Mobile-specific styles */
+      @media (max-width: 768px) {
+        .shipping-calculator {
+          padding: 15px;
+          margin-bottom: 15px;
+        }
+        
+        .shipping-method {
+          padding: 8px;
+          margin-bottom: 8px;
+        }
+        
+        .shipping-method-price {
+          font-size: 14px;
+        }
+        
+        .shipping-result {
+          padding: 12px;
+          margin-top: 12px;
+        }
+        
+        #shippingCost {
+          font-size: 18px;
+        }
+        
+        #shippingEstimate {
+          font-size: 12px;
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -477,31 +507,31 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="relative floating">
-            <!-- Foto utama -->
-            <div
-              class="rounded-lg md:rounded-2xl md:shadow-2xl overflow-hidden aspect-[4/3] md:aspect-[16/9]"
-            >
-              <img
-                src="assets/img/bakso9.jpg"
-                alt="Foto"
-                class="w-full h-full object-cover"
-              />
-            </div>
+        <div class="relative floating">
+          <!-- Foto utama -->
+          <div
+            class="rounded-lg md:rounded-2xl md:shadow-2xl overflow-hidden aspect-[4/3] md:aspect-[16/9]"
+          >
+            <img
+              src="assets/img/bakso9.jpg"
+              alt="Foto"
+              class="w-full h-full object-cover"
+            />
+          </div>
 
-            <!-- Badge mengambang -->
-            <div
-              class="absolute -bottom-5 -left-4 bg-white p-3 md:p-4 rounded-xl shadow-lg slide-in"
-            >
-              <div class="flex items-center space-x-3">
-                <div class="bg-green-500 text-white rounded-full p-2">
-                  <i class="fas fa-check"></i>
-                </div>
-                <div>
-                  <div class="font-semibold">100% Halal</div>
-                  <div class="text-sm text-gray-600">MUI Certified</div>
-                </div>
+          <!-- Badge mengambang -->
+          <div
+            class="absolute -bottom-5 -left-4 bg-white p-3 md:p-4 rounded-xl shadow-lg slide-in"
+          >
+            <div class="flex items-center space-x-3">
+              <div class="bg-green-500 text-white rounded-full p-2">
+                <i class="fas fa-check"></i>
+              </div>
+              <div>
+                <div class="font-semibold">100% Halal</div>
+                <div class="text-sm text-gray-600">MUI Certified</div>
               </div>
             </div>
           </div>
@@ -676,7 +706,7 @@
               />
               <div>
                 <div class="font-semibold">Andi Wijaya</div>
-                <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                <div class="text-yellow-500">⭐⭐⭐⭐⭐⭐</div>
               </div>
             </div>
             <p class="text-gray-600">
@@ -694,7 +724,7 @@
               />
               <div>
                 <div class="font-semibold">Siti Nurhaliza</div>
-                <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                <div class="text-yellow-500">⭐⭐⭐⭐⭐⭐</div>
               </div>
             </div>
             <p class="text-gray-600">
@@ -712,7 +742,7 @@
               />
               <div>
                 <div class="font-semibold">Budi Santoso</div>
-                <div class="text-yellow-500">⭐⭐⭐⭐⭐</div>
+                <div class="text-yellow-500">⭐⭐⭐⭐⭐⭐</div>
               </div>
             </div>
             <p class="text-gray-600">
@@ -844,7 +874,7 @@
         <div
           id="cartItems"
           class="p-6 overflow-y-auto"
-          style="max-height: calc(100vh - 200px)"
+          style="max-height: calc(100vh - 320px)"
         >
           <!-- Cart items will be dynamically loaded here -->
         </div>
@@ -1260,7 +1290,9 @@
             "sukabumi": { name: "Sukabumi", cost: 25000, estimate: "2-3 hari" },
             "cianjur": { name: "Cianjur", cost: 25000, estimate: "2-3 hari" },
             "garut": { name: "Garut", cost: 30000, estimate: "2-3 hari" },
-            "tasikmalaya": { name: "Tasikmalaya", cost: 30000, estimate: "2-3 hari" }
+            "tasikmalaya": { name: "Tasikmalaya", cost: 30000, estimate: "2-3 hari" },
+            "parung-bogor": { name: "Parung Bogor", cost: 15000, estimate: "1-2 hari" },
+            "betulin": { name: "Betulin", cost: 15000, estimate: "1-2 hari" }
           }
         },
         "jawa-tengah": {
@@ -1846,13 +1878,17 @@
         );
         const total = subtotal + selectedShippingCost;
         
-        const province = document.getElementById("shippingProvince").value;
-        const city = document.getElementById("shippingCity").value;
-        const courier = document.querySelector('input[name="courier"]:checked').value;
+        // Default shipping info if not calculated
+        let province = document.getElementById("shippingProvince").value;
+        let city = document.getElementById("shippingCity").value;
+        let courier = document.querySelector('input[name="courier"]:checked')?.value;
         
         if (!province || !city || !courier) {
-          showNotification("Silakan hitung ongkos kirim terlebih dahulu", "error");
-          return;
+          // Use default shipping info
+          province = "jawa-barat";
+          city = "parung-bogor";
+          courier = "jne";
+          selectedShippingCost = 15000;
         }
         
         const provinceName = shippingData[province].cities[city].name;
@@ -1864,8 +1900,8 @@
               `- ${item.name} (${item.quantity}x) = Rp ${(
                 item.price * item.quantity
               ).toLocaleString("id-ID")}`
-          )
-          .join("\n")}\n\nSubtotal: Rp ${subtotal.toLocaleString("id-ID")}\nOngkir (${courierName} ke ${provinceName}): Rp ${selectedShippingCost.toLocaleString("id-ID")}\nTotal: Rp ${total.toLocaleString("id-ID")}`;
+            )
+            .join("\n")}\n\nSubtotal: Rp ${subtotal.toLocaleString("id-ID")}\nOngkir (${courierName} ke ${provinceName}): Rp ${selectedShippingCost.toLocaleString("id-ID")}\nTotal: Rp ${total.toLocaleString("id-ID")}\n\nAlamat Pengiriman: Jl. Raya Parung Bogor No. 123, Kec. Parung, Bogor, Jawa Barat`;
 
         const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(
           message
