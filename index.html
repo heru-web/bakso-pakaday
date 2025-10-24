@@ -259,6 +259,84 @@
         padding: 20px;
         text-align: center;
       }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .shipping-calculator {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .shipping-result {
+        background-color: #e9f5ff;
+        border-left: 4px solid #3b82f6;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 0 5px 5px 0;
+      }
+
+      .province-option, .city-option {
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .province-option:hover, .city-option:hover {
+        background-color: #f3f4f6;
+      }
+
+      .province-option.selected, .city-option.selected {
+        background-color: #ddd6fe;
+        color: #5b21b6;
+        font-weight: 500;
+      }
+
+      .shipping-method {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .shipping-method:hover {
+        border-color: #a78bfa;
+        background-color: #f9fafb;
+      }
+
+      .shipping-method.selected {
+        border-color: #7c3aed;
+        background-color: #ede9fe;
+      }
+
+      .shipping-method input[type="radio"] {
+        margin-right: 10px;
+      }
+
+      .shipping-method-price {
+        margin-left: auto;
+        font-weight: 600;
+        color: #7c3aed;
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -771,7 +849,75 @@
           <!-- Cart items will be dynamically loaded here -->
         </div>
 
+        <!-- Shipping Calculator -->
+        <div class="shipping-calculator p-4 border-t">
+          <h4 class="font-semibold mb-3">Cek Ongkos Kirim</h4>
+          
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
+            <select id="shippingProvince" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+              <option value="">Pilih Provinsi</option>
+              <option value="dki-jakarta">DKI Jakarta</option>
+              <option value="jawa-barat">Jawa Barat</option>
+              <option value="jawa-tengah">Jawa Tengah</option>
+              <option value="jawa-timur">Jawa Timur</option>
+              <option value="bali">Bali</option>
+              <option value="sumatera-utara">Sumatera Utara</option>
+              <option value="sumatera-barat">Sumatera Barat</option>
+              <option value="sumatera-selatan">Sumatera Selatan</option>
+              <option value="kalimantan-timur">Kalimantan Timur</option>
+              <option value="sulawesi-selatan">Sulawesi Selatan</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kota/Kabupaten</label>
+            <select id="shippingCity" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" disabled>
+              <option value="">Pilih Kota</option>
+            </select>
+          </div>
+          
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kurir</label>
+            <div class="space-y-2">
+              <label class="shipping-method">
+                <input type="radio" name="courier" value="jne" checked>
+                <span>JNE</span>
+                <span class="shipping-method-price">Rp 15.000</span>
+              </label>
+              <label class="shipping-method">
+                <input type="radio" name="courier" value="tiki">
+                <span>TIKI</span>
+                <span class="shipping-method-price">Rp 14.000</span>
+              </label>
+              <label class="shipping-method">
+                <input type="radio" name="courier" value="pos">
+                <span>POS Indonesia</span>
+                <span class="shipping-method-price">Rp 13.000</span>
+              </label>
+            </div>
+          </div>
+          
+          <button onclick="calculateShipping()" class="w-full bg-purple-600 text-white py-2 rounded-lg font-medium hover:bg-purple-700 transition">
+            <i class="fas fa-calculator mr-2"></i>Hitung Ongkir
+          </button>
+          
+          <div id="shippingResult" class="shipping-result hidden">
+            <p class="font-medium">Estimasi Ongkos Kirim:</p>
+            <p class="text-2xl font-bold text-purple-600" id="shippingCost">Rp 0</p>
+            <p class="text-sm text-gray-600 mt-1" id="shippingEstimate">Estimasi waktu: 2-3 hari</p>
+          </div>
+        </div>
+
         <div class="absolute bottom-0 left-0 right-0 p-6 bg-white border-t">
+          <div class="flex justify-between mb-4">
+            <span class="font-semibold">Subtotal:</span>
+            <span id="cartSubtotal" class="font-bold text-xl">Rp 0</span>
+          </div>
+          <div class="flex justify-between mb-4">
+            <span class="font-semibold">Ongkir:</span>
+            <span id="cartShipping" class="font-bold text-xl">Rp 0</span>
+          </div>
           <div class="flex justify-between mb-4">
             <span class="font-semibold">Total:</span>
             <span id="cartTotal" class="font-bold text-xl">Rp 0</span>
@@ -797,29 +943,34 @@
           <form onsubmit="handleResellerForm(event)" class="space-y-4">
             <input
               type="text"
+              name="name"
               placeholder="Nama Lengkap"
               required
               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <input
               type="email"
+              name="email"
               placeholder="Email"
               required
               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <input
               type="tel"
+              name="phone"
               placeholder="No. WhatsApp"
               required
               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <input
               type="text"
+              name="city"
               placeholder="Kota"
               required
               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <textarea
+              name="address"
               placeholder="Alamat Lengkap"
               rows="3"
               required
@@ -828,9 +979,11 @@
             <div class="flex space-x-3">
               <button
                 type="submit"
-                class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+                id="resellerSubmitBtn"
+                class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition flex items-center justify-center"
               >
-                Daftar Sekarang
+                <span id="submitBtnText">Daftar Sekarang</span>
+                <div id="submitSpinner" class="loading-spinner ml-2 hidden"></div>
               </button>
               <button
                 type="button"
@@ -1040,7 +1193,7 @@
           name: "Bakso Ikan Salmon",
           price: 75000,
           originalPrice: 85000,
-          image: "assets/img/bakso1.jpg",
+          image: "assets/img/bakso8.jpg",
           category: "premium",
           description: "Bakso dari daging ikan salmon pilihan",
           weight: "500g",
@@ -1064,7 +1217,7 @@
           name: "Paket Hemat 5kg",
           price: 350000,
           originalPrice: 400000,
-          image: "assets/img/bakso2.jpg",
+          image: "assets/img/bakso9.jpg",
           category: "promo",
           description: "Paket hemat untuk reseller dengan harga spesial",
           weight: "5kg",
@@ -1085,14 +1238,228 @@
         }
       ];
 
+      // Shipping Data
+      const shippingData = {
+        "dki-jakarta": {
+          cities: {
+            "jakarta-pusat": { name: "Jakarta Pusat", cost: 10000, estimate: "1-2 hari" },
+            "jakarta-utara": { name: "Jakarta Utara", cost: 12000, estimate: "1-2 hari" },
+            "jakarta-barat": { name: "Jakarta Barat", cost: 12000, estimate: "1-2 hari" },
+            "jakarta-selatan": { name: "Jakarta Selatan", cost: 15000, estimate: "1-2 hari" },
+            "jakarta-timur": { name: "Jakarta Timur", cost: 15000, estimate: "1-2 hari" }
+          }
+        },
+        "jawa-barat": {
+          cities: {
+            "bandung": { name: "Bandung", cost: 20000, estimate: "2-3 hari" },
+            "bogor": { name: "Bogor", cost: 15000, estimate: "1-2 hari" },
+            "depok": { name: "Depok", cost: 15000, estimate: "1-2 hari" },
+            "bekasi": { name: "Bekasi", cost: 15000, estimate: "1-2 hari" },
+            "tangerang": { name: "Tangerang", cost: 15000, estimate: "1-2 hari" },
+            "cimahi": { name: "Cimahi", cost: 15000, estimate: "1-2 hari" },
+            "sukabumi": { name: "Sukabumi", cost: 25000, estimate: "2-3 hari" },
+            "cianjur": { name: "Cianjur", cost: 25000, estimate: "2-3 hari" },
+            "garut": { name: "Garut", cost: 30000, estimate: "2-3 hari" },
+            "tasikmalaya": { name: "Tasikmalaya", cost: 30000, estimate: "2-3 hari" }
+          }
+        },
+        "jawa-tengah": {
+          cities: {
+            "semarang": { name: "Semarang", cost: 25000, estimate: "2-3 hari" },
+            "surakarta": { name: "Surakarta", cost: 25000, estimate: "2-3 hari" },
+            "yogyakarta": { name: "Yogyakarta", cost: 25000, estimate: "2-3 hari" },
+            "magelang": { name: "Magelang", cost: 30000, estimate: "2-3 hari" },
+            "salatiga": { name: "Salatiga", cost: 30000, estimate: "2-3 hari" },
+            "pekalongan": { name: "Pekalongan", cost: 30000, estimate: "2-3 hari" },
+            "tegal": { name: "Tegal", cost: 30000, estimate: "2-3 hari" },
+            "purwokerto": { name: "Purwokerto", cost: 30000, estimate: "2-3 hari" },
+            "cilacap": { name: "Cilacap", cost: 35000, estimate: "3-4 hari" }
+          }
+        },
+        "jawa-timur": {
+          cities: {
+            "surabaya": { name: "Surabaya", cost: 25000, estimate: "2-3 hari" },
+            "malang": { name: "Malang", cost: 30000, estimate: "2-3 hari" },
+            "kediri": { name: "Kediri", cost: 30000, estimate: "2-3 hari" },
+            "blitar": { name: "Blitar", cost: 30000, estimate: "2-3 hari" },
+            "madiun": { name: "Madiun", cost: 30000, estimate: "2-3 hari" },
+            "jombang": { name: "Jombang", cost: 30000, estimate: "2-3 hari" },
+            "mojokerto": { name: "Mojokerto", cost: 30000, estimate: "2-3 hari" },
+            "pasuruan": { name: "Pasuruan", cost: 35000, estimate: "3-4 hari" },
+            "probolinggo": { name: "Probolinggo", cost: 35000, estimate: "3-4 hari" },
+            "banyuwangi": { name: "Banyuwangi", cost: 40000, estimate: "3-4 hari" }
+          }
+        },
+        "bali": {
+          cities: {
+            "denpasar": { name: "Denpasar", cost: 35000, estimate: "3-4 hari" },
+            "badung": { name: "Badung", cost: 35000, estimate: "3-4 hari" },
+            "gianyar": { name: "Gianyar", cost: 35000, estimate: "3-4 hari" },
+            "tabanan": { name: "Tabanan", cost: 35000, estimate: "3-4 hari" },
+            "klungkung": { name: "Klungkung", cost: 40000, estimate: "3-4 hari" },
+            "bangli": { name: "Bangli", cost: 40000, estimate: "3-4 hari" },
+            "buleleng": { name: "Buleleng", cost: 40000, estimate: "3-4 hari" },
+            "jembrana": { name: "Jembrana", cost: 40000, estimate: "3-4 hari" },
+            "karangasem": { name: "Karangasem", cost: 40000, estimate: "3-4 hari" }
+          }
+        },
+        "sumatera-utara": {
+          cities: {
+            "medan": { name: "Medan", cost: 40000, estimate: "3-4 hari" },
+            "binjai": { name: "Binjai", cost: 40000, estimate: "3-4 hari" },
+            "pematangsiantar": { name: "Pematangsiantar", cost: 45000, estimate: "3-4 hari" },
+            "sibolga": { name: "Sibolga", cost: 45000, estimate: "3-4 hari" },
+            "padangsidempuan": { name: "Padang Sidempuan", cost: 45000, estimate: "3-4 hari" },
+            "tebingtinggi": { name: "Tebing Tinggi", cost: 45000, estimate: "3-4 hari" }
+          }
+        },
+        "sumatera-barat": {
+          cities: {
+            "padang": { name: "Padang", cost: 35000, estimate: "3-4 hari" },
+            "bukittinggi": { name: "Bukittinggi", cost: 35000, estimate: "3-4 hari" },
+            "payakumbuh": { name: "Payakumbuh", cost: 35000, estimate: "3-4 hari" },
+            "solok": { name: "Solok", cost: 40000, estimate: "3-4 hari" },
+            "padangpanjang": { name: "Padang Panjang", cost: 40000, estimate: "3-4 hari" }
+          }
+        },
+        "sumatera-selatan": {
+          cities: {
+            "palembang": { name: "Palembang", cost: 35000, estimate: "3-4 hari" },
+            "prabumulih": { name: "Prabumulih", cost: 40000, estimate: "3-4 hari" },
+            "lubuklinggau": { name: "Lubuklinggau", cost: 40000, estimate: "3-4 hari" },
+            "pagaralam": { name: "Pagaralam", cost: 40000, estimate: "3-4 hari" },
+            "banyuasin": { name: "Banyuasin", cost: 40000, estimate: "3-4 hari" },
+            "ogankomeringilir": { name: "Ogan Komering Ilir", cost: 45000, estimate: "3-4 hari" },
+            "ogankomeringulu": { name: "Ogan Komering Ulu", cost: 45000, estimate: "3-4 hari" }
+          }
+        },
+        "kalimantan-timur": {
+          cities: {
+            "balikpapan": { name: "Balikpapan", cost: 45000, estimate: "3-4 hari" },
+            "samarinda": { name: "Samarinda", cost: 45000, estimate: "3-4 hari" },
+            "bontang": { name: "Bontang", cost: 50000, estimate: "4-5 hari" },
+            "kutai": { name: "Kutai", cost: 50000, estimate: "4-5 hari" },
+            "penajam": { name: "Penajam", cost: 50000, estimate: "4-5 hari" }
+          }
+        },
+        "sulawesi-selatan": {
+          cities: {
+            "makassar": { name: "Makassar", cost: 45000, estimate: "3-4 hari" },
+            "kendari": { name: "Kendari", cost: 50000, estimate: "4-5 hari" },
+            "palopo": { name: "Palopo", cost: 50000, estimate: "4-5 hari" },
+            "parepare": { name: "Parepare", cost: 50000, estimate: "4-5 hari" },
+            "bone": { name: "Bone", cost: 50000, estimate: "4-5 hari" },
+            "wajo": { name: "Wajo", cost: 50000, estimate: "4-5 hari" },
+            "soppeng": { name: "Soppeng", cost: 50000, estimate: "4-5 hari" },
+            "sinjai": { name: "Sinjai", cost: 50000, estimate: "4-5 hari" },
+            "bulukumba": { name: "Bulukumba", cost: 55000, estimate: "4-5 hari" }
+          }
+        }
+      };
+
+      // Courier Data
+      const courierData = {
+        "jne": { name: "JNE", basePrice: 10000 },
+        "tiki": { name: "TIKI", basePrice: 9000 },
+        "pos": { name: "POS Indonesia", basePrice: 8000 }
+      };
+
       // Shopping Cart
       let cart = [];
+      let selectedShippingCost = 0;
 
       // Initialize
       document.addEventListener("DOMContentLoaded", function () {
         renderProducts("all");
         updateCartCount();
+        setupShippingCalculator();
       });
+
+      // Setup Shipping Calculator
+      function setupShippingCalculator() {
+        const provinceSelect = document.getElementById("shippingProvince");
+        const citySelect = document.getElementById("shippingCity");
+        
+        // Add event listener to province select
+        provinceSelect.addEventListener("change", function() {
+          const selectedProvince = this.value;
+          
+          // Clear city options
+          citySelect.innerHTML = '<option value="">Pilih Kota</option>';
+          citySelect.disabled = !selectedProvince;
+          
+          // Populate cities based on selected province
+          if (selectedProvince && shippingData[selectedProvince]) {
+            const cities = shippingData[selectedProvince].cities;
+            for (const cityKey in cities) {
+              const city = cities[cityKey];
+              const option = document.createElement("option");
+              option.value = cityKey;
+              option.textContent = city.name;
+              citySelect.appendChild(option);
+            }
+          }
+        });
+        
+        // Add event listeners to courier options
+        document.querySelectorAll('input[name="courier"]').forEach(radio => {
+          radio.addEventListener("change", function() {
+            // Update selected courier style
+            document.querySelectorAll('.shipping-method').forEach(method => {
+              method.classList.remove('selected');
+            });
+            this.parentElement.classList.add('selected');
+          });
+        });
+      }
+
+      // Calculate Shipping
+      function calculateShipping() {
+        const province = document.getElementById("shippingProvince").value;
+        const city = document.getElementById("shippingCity").value;
+        const courier = document.querySelector('input[name="courier"]:checked').value;
+        
+        if (!province || !city || !courier) {
+          showNotification("Silakan lengkapi data pengiriman", "error");
+          return;
+        }
+        
+        // Get base cost from shipping data
+        const baseCost = shippingData[province].cities[city].cost;
+        const estimate = shippingData[province].cities[city].estimate;
+        
+        // Get courier multiplier
+        const courierMultiplier = courierData[courier].basePrice / 10000;
+        
+        // Calculate total shipping cost
+        const totalWeight = cart.reduce((total, item) => {
+          // Extract weight in kg from product weight string
+          const weightMatch = item.weight.match(/(\d+)kg/);
+          const weight = weightMatch ? parseInt(weightMatch[1]) : 0.5; // Default to 0.5kg if not found
+          return total + (weight * item.quantity);
+        }, 0);
+        
+        // Calculate shipping cost based on weight
+        let shippingCost = baseCost;
+        if (totalWeight > 1) {
+          // Add additional cost for each additional kg
+          shippingCost += Math.ceil(totalWeight - 1) * 5000;
+        }
+        
+        // Apply courier multiplier
+        shippingCost = Math.round(shippingCost * courierMultiplier);
+        
+        // Update shipping cost display
+        document.getElementById("shippingCost").textContent = `Rp ${shippingCost.toLocaleString("id-ID")}`;
+        document.getElementById("shippingEstimate").textContent = `Estimasi waktu: ${estimate}`;
+        document.getElementById("shippingResult").classList.remove("hidden");
+        
+        // Update cart shipping and total
+        selectedShippingCost = shippingCost;
+        updateCartTotal();
+        
+        showNotification("Biaya pengiriman berhasil dihitung");
+      }
 
       // Render Products
       function renderProducts(category) {
@@ -1447,10 +1814,20 @@
 
       // Update Cart Total
       function updateCartTotal() {
-        const total = cart.reduce(
+        const subtotal = cart.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
         );
+        
+        document.getElementById(
+          "cartSubtotal"
+        ).textContent = `Rp ${subtotal.toLocaleString("id-ID")}`;
+        
+        document.getElementById(
+          "cartShipping"
+        ).textContent = `Rp ${selectedShippingCost.toLocaleString("id-ID")}`;
+        
+        const total = subtotal + selectedShippingCost;
         document.getElementById(
           "cartTotal"
         ).textContent = `Rp ${total.toLocaleString("id-ID")}`;
@@ -1463,10 +1840,24 @@
           return;
         }
 
-        const total = cart.reduce(
+        const subtotal = cart.reduce(
           (sum, item) => sum + item.price * item.quantity,
           0
         );
+        const total = subtotal + selectedShippingCost;
+        
+        const province = document.getElementById("shippingProvince").value;
+        const city = document.getElementById("shippingCity").value;
+        const courier = document.querySelector('input[name="courier"]:checked').value;
+        
+        if (!province || !city || !courier) {
+          showNotification("Silakan hitung ongkos kirim terlebih dahulu", "error");
+          return;
+        }
+        
+        const provinceName = shippingData[province].cities[city].name;
+        const courierName = courierData[courier].name;
+        
         const message = `Assalamu'alaikum, saya ingin memesan:\n\n${cart
           .map(
             (item) =>
@@ -1474,7 +1865,7 @@
                 item.price * item.quantity
               ).toLocaleString("id-ID")}`
           )
-          .join("\n")}\n\nTotal: Rp ${total.toLocaleString("id-ID")}`;
+          .join("\n")}\n\nSubtotal: Rp ${subtotal.toLocaleString("id-ID")}\nOngkir (${courierName} ke ${provinceName}): Rp ${selectedShippingCost.toLocaleString("id-ID")}\nTotal: Rp ${total.toLocaleString("id-ID")}`;
 
         const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(
           message
@@ -1584,4 +1975,3 @@
     </script>
   </body>
 </html>
-
