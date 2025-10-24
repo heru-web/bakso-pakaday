@@ -137,6 +137,128 @@
       .nutrition-table th {
         background-color: #f2f2f2;
       }
+
+      .video-testimonial {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
+        padding: 30px;
+        color: white;
+        margin-bottom: 40px;
+      }
+
+      .play-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .play-button:hover {
+        background-color: white;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+
+      .play-button i {
+        color: #764ba2;
+        font-size: 30px;
+        margin-left: 5px;
+      }
+
+      .shorts-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+      }
+
+      .shorts-frame {
+        width: 100%;
+        max-width: 400px;
+        height: 700px;
+        background-color: #000;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .shorts-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .shorts-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+        color: white;
+      }
+
+      .shorts-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .shorts-description {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .video-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding-bottom: 177.78%; /* 9:16 Aspect Ratio untuk Shorts */
+        height: 0;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .video-modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .video-modal-iframe {
+        width: 100%;
+        height: 700px;
+        border: none;
+      }
+
+      .video-modal-info {
+        padding: 20px;
+        text-align: center;
+      }
     </style>
   </head>
   <body class="bg-gray-50">
@@ -284,7 +406,7 @@
               class="rounded-lg md:rounded-2xl md:shadow-2xl overflow-hidden aspect-[4/3] md:aspect-[16/9]"
             >
               <img
-                src="bakso9.jpg"
+                src="assets/img/bakso9.jpg"
                 alt="Foto"
                 class="w-full h-full object-cover"
               />
@@ -431,6 +553,38 @@
           <h2 class="text-4xl font-bold mb-4">Apa Kata Mereka</h2>
           <p class="text-gray-600 text-lg">
             Testimoni dari pelanggan setia kami
+          </p>
+        </div>
+
+        <!-- Video Testimonial -->
+        <div class="video-testimonial max-w-4xl mx-auto mb-16">
+          <h3 class="text-2xl font-bold text-center mb-6 text-white">
+            Video Testimoni Pelanggan
+          </h3>
+          
+          <!-- YouTube Shorts Container -->
+          <div class="shorts-container">
+            <div class="shorts-frame">
+              <div class="relative w-full h-full">
+                <img 
+                  src="https://img.youtube.com/vi/fuRyyriy9qM/maxresdefault.jpg" 
+                  alt="Video Testimonial Thumbnail" 
+                  class="shorts-video"
+                >
+                <div class="play-button" onclick="playShortsVideo()">
+                  <i class="fas fa-play"></i>
+                </div>
+                <div class="shorts-overlay">
+                  <div class="shorts-title">Testimoni BaksoKu Premium</div>
+                  <div class="shorts-description">"BaksoKu Premium benar-benar mengubah bisnis kuliner saya!"</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <p class="text-center mt-6 text-white">
+            "BaksoKu Premium benar-benar mengubah bisnis kuliner saya! Kualitas terbaik dengan harga yang sangat kompetitif."
+            <span class="block font-semibold mt-2">- Ahmad Fauzi, Pemilik Warung Bakso Sukses</span>
           </p>
         </div>
 
@@ -701,6 +855,28 @@
       </div>
     </div>
 
+    <!-- Video Modal -->
+    <div id="videoModal" class="product-detail-modal">
+      <div class="video-modal-content">
+        <span class="close-detail" onclick="closeVideoModal()" style="color: white; position: absolute; top: 10px; right: 15px; z-index: 10;">&times;</span>
+        <iframe 
+          id="testimonialVideo"
+          class="video-modal-iframe"
+          src="" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <div class="video-modal-info">
+          <h3 class="text-xl font-bold">Testimoni Pelanggan Setia</h3>
+          <p class="text-gray-600 mt-2">
+            "BaksoKu Premium benar-benar mengubah bisnis kuliner saya! Kualitas terbaik dengan harga yang sangat kompetitif."
+          </p>
+          <p class="font-semibold mt-2">- Ahmad Fauzi, Pemilik Warung Bakso Sukses</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Notification Toast -->
     <div
       id="notification"
@@ -720,7 +896,7 @@
           name: "Bakso Urat Premium",
           price: 45000,
           originalPrice: 55000,
-          image: "bakso2.jpg",
+          image: "assets/img/bakso2.jpg",
           category: "bestseller",
           description: "Bakso dengan daging sapi pilihan dan urat berkualitas",
           weight: "500g",
@@ -744,7 +920,7 @@
           name: "Bakso Halus Special",
           price: 35000,
           originalPrice: 40000,
-          image: "bakso3.jpg",
+          image: "assets/img/bakso3.jpg",
           category: "bestseller",
           description: "Bakso halus dengan tekstur yang lembut dan rasa gurih",
           weight: "500g",
@@ -768,7 +944,7 @@
           name: "Bakso Jumbo Super",
           price: 65000,
           originalPrice: 75000,
-          image: "bakso4.jpg",
+          image: "assets/img/bakso4.jpg",
           category: "premium",
           description: "Bakso ukuran jumbo dengan isi daging yang melimpah",
           weight: "1kg",
@@ -792,7 +968,7 @@
           name: "Bakso Keju Mozarella",
           price: 55000,
           originalPrice: 60000,
-          image: "bakso5.jpg",
+          image: "assets/img/bakso5.jpg",
           category: "premium",
           description: "Perpaduan bakso premium dengan keju mozarella yang lumer",
           weight: "500g",
@@ -816,7 +992,7 @@
           name: "Paket Bakso Mix",
           price: 85000,
           originalPrice: 100000,
-          image: "bakso6.jpg",
+          image: "assets/img/bakso6.jpg",
           category: "promo",
           description: "Paket lengkap berbagai jenis bakso favorit",
           weight: "1.5kg",
@@ -840,7 +1016,7 @@
           name: "Bakso Pedas Gila",
           price: 40000,
           originalPrice: 45000,
-          image: "bakso7.jpg",
+          image: "assets/img/bakso7.jpg",
           category: "bestseller",
           description: "Bakso dengan level pedas yang menggugah selera",
           weight: "500g",
@@ -864,7 +1040,7 @@
           name: "Bakso Ikan Salmon",
           price: 75000,
           originalPrice: 85000,
-          image: "bakso2.jpg",
+          image: "assets/img/bakso1.jpg",
           category: "premium",
           description: "Bakso dari daging ikan salmon pilihan",
           weight: "500g",
@@ -888,7 +1064,7 @@
           name: "Paket Hemat 5kg",
           price: 350000,
           originalPrice: 400000,
-          image: "bakso1.jpg",
+          image: "assets/img/bakso2.jpg",
           category: "promo",
           description: "Paket hemat untuk reseller dengan harga spesial",
           weight: "5kg",
@@ -1118,6 +1294,29 @@
       // Close Product Detail
       function closeProductDetail() {
         document.getElementById("productDetailModal").style.display = "none";
+      }
+
+      // Play Shorts Video
+      function playShortsVideo() {
+        const modal = document.getElementById("videoModal");
+        const video = document.getElementById("testimonialVideo");
+        
+        // Set video source with autoplay for YouTube Shorts
+        // Menggunakan parameter yang lebih kompatibel untuk menghindari error
+        video.src = "https://www.youtube.com/embed/fuRyyriy9qM?autoplay=1&rel=0&modestbranding=1";
+        
+        modal.style.display = "block";
+      }
+
+      // Close Video Modal
+      function closeVideoModal() {
+        const modal = document.getElementById("videoModal");
+        const video = document.getElementById("testimonialVideo");
+        
+        // Stop video by removing src
+        video.src = "";
+        
+        modal.style.display = "none";
       }
 
       // Filter Products
@@ -1371,9 +1570,15 @@
 
       // Close modal when clicking outside of it
       window.onclick = function(event) {
-        const modal = document.getElementById("productDetailModal");
-        if (event.target == modal) {
-          modal.style.display = "none";
+        const productModal = document.getElementById("productDetailModal");
+        const videoModal = document.getElementById("videoModal");
+        
+        if (event.target == productModal) {
+          productModal.style.display = "none";
+        }
+        
+        if (event.target == videoModal) {
+          closeVideoModal();
         }
       }
     </script>
